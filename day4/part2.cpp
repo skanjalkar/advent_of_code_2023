@@ -45,7 +45,7 @@ int main() {
 
         for (int i = id + 1; i <= id + matches; i++) {
             if (cards.count(i) == 0) {
-                cards[i] = 1;
+                cards[i] = cards[id];
             }
             else {
                 cards[i] += cards[id];
