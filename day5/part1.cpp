@@ -40,8 +40,10 @@ void mapping(unordered_map<long long, vector<long long>>& mp, string& temp) {
 
 long long value(unordered_map<long long, vector<long long>>& mp, long long key) {
     for (auto it = mp.begin(); it != mp.end(); it++) {
-        if (it->second[0] <= key && key <= it->second[1]) {
-            return it->first + key - it->second[0];
+        for (int i = 0; i < it->second.size(); i+=2) {
+            if (it->second[i] <= key && key < it->second[i+1]) {
+                return it->first + key - it->second[i];
+            }
         }
     }
     return key;
