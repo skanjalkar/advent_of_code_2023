@@ -38,7 +38,7 @@ void mapping(unordered_map<long long, vector<long long>>& mp, string& temp) {
     }
 }
 
-int value(unordered_map<long long, vector<long long>>& mp, int key) {
+long long value(unordered_map<long long, vector<long long>>& mp, long long key) {
     for (auto it = mp.begin(); it != mp.end(); it++) {
         if (it->second[0] <= key && key <= it->second[1]) {
             return it->first + key - it->second[0];
@@ -49,7 +49,7 @@ int value(unordered_map<long long, vector<long long>>& mp, int key) {
 
 int main() {
     string line;
-    int ans = INT_MAX;
+    long long ans = LONG_LONG_MAX;
     unordered_map<long long, vector<long long>> seed_to_soil_map;
     unordered_map<long long, vector<long long>> soil_to_fertilizer_map;
     unordered_map<long long, vector<long long>> fertilizer_to_water_map;
@@ -93,14 +93,14 @@ int main() {
     }
 
     for (auto seed : seeds_set) {
-        int soil = value(seed_to_soil_map, seed);
-        int fertilizer = value(soil_to_fertilizer_map, soil);
-        int water = value(fertilizer_to_water_map, fertilizer);
-        int light = value(water_to_light_map, water);
-        int temp = value(light_to_temp_map, light);
-        int humidity = value(temp_to_humidity_map, temp);
-        int location = value(humidity_to_location_map, humidity);
-        cout << seed << " " << soil << " " << fertilizer << " " << water << " " << light << " " << temp << " " << humidity << " " << location << endl;
+        long long soil = value(seed_to_soil_map, seed);
+        long long fertilizer = value(soil_to_fertilizer_map, soil);
+        long long water = value(fertilizer_to_water_map, fertilizer);
+        long long light = value(water_to_light_map, water);
+        long long temp = value(light_to_temp_map, light);
+        long long humidity = value(temp_to_humidity_map, temp);
+        long long location = value(humidity_to_location_map, humidity);
+        // cout << seed << " " << soil << " " << fertilizer << " " << water << " " << light << " " << temp << " " << humidity << " " << location << endl;
         ans = min(ans, location);
     }
     cout << ans << endl;
