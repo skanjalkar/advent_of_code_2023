@@ -1,0 +1,20 @@
+name: C++ Compile Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up C++ environment
+      uses: actions/setup-cpp@v2
+      with:
+        compiler: 'gcc'
+
+    - name: Compile part1.cpp and part2.cpp files
+      run: |
+        find . -name part1.cpp -exec g++ {} -o {}.o \;
+        find . -name part2.cpp -exec g++ {} -o {}.o \;
