@@ -31,7 +31,7 @@ unordered_map<char, int> values = {
 
 struct Bids {
     string name;
-    int price;
+    long long price;
     hand h;
     unordered_map<char, int> unique_c;
 
@@ -41,9 +41,6 @@ struct Bids {
     }
 
     void normalSetHand() {
-        for (char& c : name) {
-            unique_c[c]++;
-        }
         if (unique_c.size() == 1) {
             h = FIVE;
         } else if (unique_c.size() == 2) {
@@ -71,19 +68,19 @@ struct Bids {
 
     // check which hand it is and assign the hand
     void setHand() {
-        string temp = name;
-        sort(temp.begin(), temp.end(), [](char a, char b) {
-            return values[a] > values[b];
-        });
+        // string temp = name;
+        // sort(temp.begin(), temp.end(), [](char a, char b) {
+        //     return values[a] > values[b];
+        // });
 
         for (char& c : name) {
             unique_c[c]++;
         }
 
-        if (unique_c.count('J')) {
+        if (unique_c.count('J') > 0) {
             // J will be used as any other element
             int v = unique_c['J'];
-            unique_c.erase('J');
+            unique_c['J'] = 0;
 
             int mx = 0;
             for (auto& x : unique_c) {
@@ -105,7 +102,6 @@ struct Bids {
                 }
                 if (cnt == 2) {
                     h = FULL;
-                    return;
                 }
                 else {
                     h = THREE;
@@ -113,8 +109,6 @@ struct Bids {
             }
             else if (mx == 2) {
                 h = ONE;
-            } else {
-                h = HIGH;
             }
         }
         else {
@@ -146,7 +140,7 @@ int main() {
     vector<Bids> bids;
     while (getline(cin, line)) {
         string cards = line.substr(0, line.find(" "));
-        int price = stoi(line.substr(line.find(" ") + 1));
+        long long price = stoll(line.substr(line.find(" ") + 1));
         bids.push_back(Bids(cards, price));
     }
     // cout << "\n";
@@ -158,11 +152,11 @@ int main() {
     // print bids
     // cout << "\n";
     // for (auto& x : bids) {
-    //     cout << x.name << " " << x.price << endl;
+    //     cout << x.name << " " << x.price << " " << x.h << endl;
     // }
     long long ans = 0;
-    const int n = bids.size();
-    for (int i = 0; i < n; i++) {
+    const long long n = bids.size();
+    for (long long i = 0; i < n; i++) {
         ans += bids[i].price*(n-i);
     }
 
