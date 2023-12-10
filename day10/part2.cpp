@@ -89,7 +89,7 @@ int main() {
     long long ans = 0;
 
     // shoot a ray from every point
-
+    // vector<pair<int, int>>points;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
             if (visited[i][j]) continue;
@@ -106,11 +106,14 @@ int main() {
                 y++;
             }
             if (temp % 2 == 1) {
+                // points.push_back({i, j});
                 ans++;
             }
         }
     }
-
+    // for (int i = 0; i < points.size(); i++) {
+    //     cout << "row: " << points[i].first << " col: " << points[i].second << " matrix val: " << matrix[points[i].first][points[i].second] << endl;
+    // }
     cout << ans << endl;
 
     return 0;
