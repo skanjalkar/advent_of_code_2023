@@ -27,7 +27,7 @@ long long predictNext(vector<long long> nums) {
         tempSum += nums[nums.size() - 1];
         if (!found) {
             // cout << nums[nums.size() - 1] << "\n";
-            cout << tempSum << "\n";
+            // cout << tempSum << "\n";
             return tempSum;
         }
         nums = temp;
