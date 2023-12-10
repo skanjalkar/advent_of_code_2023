@@ -18,20 +18,6 @@ vector<pair<int, int>> dirs = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 enum Direction {UP, DOWN, LEFT, RIGHT};
 vector<Direction> directions = {Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
 
-void dfs(int x, int y, vector<vector<char>>& matrix, vector<vector<bool>>& visited, vector<vector<vector<bool>>>& newVisited, int n, int m) {
-    if (x < 0 || x >= n || y < 0 || y >= m || newVisited[x][y][0] || newVisited[x][y][1] || newVisited[x][y][2] || newVisited[x][y][3]) {
-        return;
-    }
-    for (int i = 0; i < 4; ++i) {
-        if (!newVisited[x][y][i]) {
-            newVisited[x][y][i] = true;
-            dfs(x + dirs[i].first, y + dirs[i].second, matrix, visited, newVisited, n, m);
-            visited[x][y] = true;
-        }
-    }
-}
-
-
 int main() {
     vector<vector<char>> matrix;
     string line;
@@ -100,122 +86,32 @@ int main() {
         }
     }
 
-    // find pairs of chars that can be squeezed
-    // all that map to up or down and if they are side by side can be squeezed
-    // all that map to left right and if they are up and down can be squeezed
-    // also have to check the direction in which they are being visited
-
-    unordered_set<char> verticalSqueeze = {'|', 'L', 'J', '7', 'F'};
-    unordered_set<char> horizontalSqueeze = {'-', 'L', 'J', '7', 'F'};
-    unordered_map<char, vector<char>> digaonalVSqueeze = {{'|', {'F', 'L'}}, {'J', {'|', 'F', 'L'}}, {'7', {'|', 'F', 'L'}}};
-    unordered_map<char, vector<char>> diagonalHSqueeze = {{'-', {'L', 'J'}}, {'F', {'-', 'L', 'J'}}, {'7', {'-', 'L', 'J'}}};
-    vector<vector<vector<bool>>> newVisited(n, vector<vector<bool>>(m, vector<bool>(4, false)));
-    for (int i = 1; i < n-1; ++i) {
-        for (int j = 0; j < m-1; ++j) {
-            if (matrix[i][j] != '.' && matrix[i][j+1] != '.' && verticalSqueeze.count(matrix[i][j]) && verticalSqueeze.count(matrix[i][j+1])) {
-                newVisited[i][j][2] = true;
-                newVisited[i][j][3] = true;
-                newVisited[i][j+1][2] = true;
-                newVisited[i][j+1][3] = true;
-            }
-            if (matrix[i][j] != '.' && matrix[i-1][j+1] != '.' && digaonalVSqueeze.count(matrix[i][j]) && digaonalVSqueeze.count(matrix[i-1][j+1])) {
-                newVisited[i][j][2] = true;
-                newVisited[i][j][3] = true;
-                newVisited[i-1][j+1][2] = true;
-                newVisited[i-1][j+1][3] = true;
-            }
-            if (matrix[i][j] != '.' && matrix[i+1][j+1] != '.' && digaonalVSqueeze.count(matrix[i][j]) && digaonalVSqueeze.count(matrix[i+1][j+1])) {
-                newVisited[i][j][2] = true;
-                newVisited[i][j][3] = true;
-                newVisited[i+1][j+1][2] = true;
-                newVisited[i+1][j+1][3] = true;
-            }
-        }
-    }
-
-    for (int i = 0; i < n-1; ++i) {
-        for (int j = 1; j < m-1; ++j) {
-            if (matrix[i][j] != '.' && matrix[i+1][j] != '.' && horizontalSqueeze.count(matrix[i][j]) && horizontalSqueeze.count(matrix[i+1][j])) {
-                newVisited[i][j][0] = true;
-                newVisited[i][j][1] = true;
-                newVisited[i+1][j][0] = true;
-                newVisited[i+1][j][1] = true;
-            }
-            if (matrix[i][j] != '.' && matrix[i+1][j-1] != '.' && diagonalHSqueeze.count(matrix[i][j]) && diagonalHSqueeze.count(matrix[i+1][j-1])) {
-                newVisited[i][j][0] = true;
-                newVisited[i][j][1] = true;
-                newVisited[i+1][j-1][0] = true;
-                newVisited[i+1][j-1][1] = true;
-            }
-            if (matrix[i][j] != '.' && matrix[i+1][j+1] != '.' && diagonalHSqueeze.count(matrix[i][j]) && diagonalHSqueeze.count(matrix[i+1][j+1])) {
-                newVisited[i][j][0] = true;
-                newVisited[i][j][1] = true;
-                newVisited[i+1][j+1][0] = true;
-                newVisited[i+1][j+1][1] = true;
-            }
-        }
-    }
-
-    // for (int i = 0; i < n; ++i) {
-    //     for (int j = 0; j < m; ++j) {
-    //         cout << visited[i][j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << endl;
-
-    // print new visited
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            cout << "(" << i << ", " << j << "): ";
-            for (int k = 0; k < 4; ++k) {
-                cout << newVisited[i][j][k] << " ";
-            }
-            cout << endl;
-        }
-        cout << endl;
-    }
-
-
-    for (int i = 0; i < n; ++i) {
-        if (matrix[i][0] == '.' && !visited[i][0]) {
-            dfs(i, 0, matrix, visited, newVisited, n, m);
-        }
-    }
-    for (int j = 0; j < m; ++j) {
-        if (matrix[0][j] == '.' && !visited[0][j]) {
-            dfs(0, j, matrix, visited, newVisited, n, m);
-        }
-    }
-
-    for (int i = n-1; i >= 0; --i) {
-        if (matrix[i][m-1] == '.' && !visited[i][m-1]) {
-            dfs(i, m-1, matrix, visited, newVisited, n, m);
-        }
-    }
-
-    for (int j = m-1; j >= 0; --j) {
-        if (matrix[n-1][j] == '.' && !visited[n-1][j]) {
-            dfs(n-1, j, matrix, visited, newVisited, n, m);
-        }
-    }
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            cout << visited[i][j] << " ";
-        }
-        cout << endl;
-    }
-
     long long ans = 0;
+
+    // shoot a ray from every point
+
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < m; ++j) {
-            if (!visited[i][j]) {
+            if (visited[i][j]) continue;
+
+            long long temp = 0;
+            int x = i, y = j;
+
+            while (x < n && y < m) {
+                char curr = matrix[x][y];
+                if (visited[x][y] && curr != 'L' && curr != '7') {
+                    temp++;
+                }
+                x++;
+                y++;
+            }
+            if (temp % 2 == 1) {
                 ans++;
             }
         }
     }
+
     cout << ans << endl;
+
     return 0;
 }
