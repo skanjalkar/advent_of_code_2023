@@ -40,63 +40,23 @@ long long calculate(vector<vector<char>>& grid, int i, int j) {
     }
     // cout << "New i, j " << i << " " << j << endl;
     // cout << "s " << s << endl;
-    v = (s-i+1);
-    return v;
+    return s+1;
 }
 
 long long solve(vector<vector<char>>& grid) {
     long long temp = 0;
-    // print grid
     for (int i = 0; i < grid.size()-1; i++) {
         if (grid[i] == grid[i+1]) {
-            // print both strings
-            // for (const char& c : grid[i]) {
-            //     cout << c;
-            // }
-
-            // cout << endl;
-
-            // for (const char& c : grid[i+1]) {
-            //     cout << c;
-            // }
-
-            // cout << endl;
-
-
             long long temp2 = calculate(grid, i, i+1);
-            temp += (temp2 == -1 ? 0 : temp2*100);
-            break;
+            temp += (temp2 == -1 ? 0 : (temp2)*100);
         }
     }
 
     vector<vector<char>> grid2 = transposeMatrix(grid);
-    // print grid 2
-    // cout << grid.size() << " " << grid[0].size() << endl;
-    // cout << grid2.size() << " " << grid2[0].size() << endl;
-    // for (int i = 0; i < grid2.size(); i++) {
-    //     for (int j = 0; j < grid2[i].size(); j++) {
-    //         cout << grid2[i][j];
-    //     }
-    //     cout << endl;
-    // }
     for (int i = 0; i < grid2.size()-1; i++) {
         if (grid2[i] == grid2[i+1]) {
-            // print both strings
-            // cout << "i, i+1 " << i << " " << i+1 << endl;
-            // for (const char& c : grid2[i]) {
-            //     cout << c;
-            // }
-
-            // cout << endl;
-
-            // for (const char& c : grid2[i+1]) {
-            //     cout << c;
-            // }
-
-            // cout << endl;
             long long temp2 = calculate(grid2, i, i+1);
             temp += (temp2 == -1 ? 0 : temp2);
-            break;
         }
     }
     return temp;
