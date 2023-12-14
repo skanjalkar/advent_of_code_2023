@@ -66,11 +66,11 @@ long long getLoad(vector<vector<char>>& grid) {
                 cnt++;
             }
         }
-        cout << "i, cnt" << i << " " << cnt << endl;
+        // cout << "i, cnt" << i << " " << cnt << endl;
         ans += (cnt * (n-i));
     }
 
-    printMatrix(transposed);
+    // printMatrix(transposed);
 
     return ans;
 }
@@ -85,6 +85,7 @@ int main() {
         }
         inputs.push_back(row);
     }
+
 
     vector<vector<char>> grid = transposeMatrix(inputs);
     long long ans = getLoad(grid);
