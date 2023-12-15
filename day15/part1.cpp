@@ -19,7 +19,7 @@ void solve(vector<string>& seqeunces) {
             temp = temp * 17;
             temp = temp % 256;
         }
-        cout << temp << endl;
+        // cout << temp << endl;
         ans += temp;
     }
     cout << ans << endl;
