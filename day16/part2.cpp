@@ -118,35 +118,48 @@ int solve(vector<vector<char>>& grid, int sx, int sy, Direction dir1) {
     };
 
     vector<Beam> beams;
-    Beam b = {sx, sy, dir1};
+    Beam b = Beam(sx, sy, dir1);
     beams.push_back(b);
     int cnt = 0;
     int j = 0;
+    vector<vector<vector<bool>>> seen(grid.size(), vector<vector<bool>>(grid[0].size(), vector<bool>(4, false)));
     while (!beams.empty()) {
         j++;
         int n = beams.size();
         vector<vector<bool>> prev = energized;
-
+        // cout << n << endl;
         for (int i = 0; i < n; i++) {
+            // use static cast to convert enum to int
+            // cout << beams[i].x << " " << beams[i].y << " " << static_cast<int>(beams[i].dir) << endl;
+            if (valid && seen[beams[i].y][beams[i].x][static_cast<int>(beams[i].dir)]) {
+                beams[i].x = -1;
+                beams[i].y = -1;
+                continue;
+            }
             if (beams[i].dir == Direction::RIGHT && valid && horizontal) {
                 energized[beams[i].y][beams[i].x] = true;
+                seen[beams[i].y][beams[i].x][static_cast<int>(beams[i].dir)] = true;
                 beams[i].x++;
             }
             else if (beams[i].dir == Direction::LEFT && valid && horizontal) {
                 energized[beams[i].y][beams[i].x] = true;
+                seen[beams[i].y][beams[i].x][static_cast<int>(beams[i].dir)] = true;
                 beams[i].x--;
             }
             else if (beams[i].dir == Direction::UP && valid && vertical) {
                 energized[beams[i].y][beams[i].x] = true;
+                seen[beams[i].y][beams[i].x][static_cast<int>(beams[i].dir)] = true;
                 beams[i].y--;
             }
             else if (beams[i].dir == Direction::DOWN && valid && vertical) {
                 energized[beams[i].y][beams[i].x] = true;
+                seen[beams[i].y][beams[i].x][static_cast<int>(beams[i].dir)] = true;
                 beams[i].y++;
             }
             else {
                 if (valid) {
                     energized[beams[i].y][beams[i].x] = true;
+                    seen[beams[i].y][beams[i].x][static_cast<int>(beams[i].dir)] = true;
                 }
                 if (invalid) {
                     beams[i].x = -1;
@@ -157,7 +170,6 @@ int solve(vector<vector<char>>& grid, int sx, int sy, Direction dir1) {
                 char c = grid[beams[i].y][beams[i].x];
                 if (c == '/' || c == '\\') {
                     beams[i].dir = turnMap[{c, beams[i].dir}];
-                    // also need to move direction
                     if (beams[i].dir == Direction::RIGHT) {
                         beams[i].x++;
                     }
@@ -202,17 +214,15 @@ int solve(vector<vector<char>>& grid, int sx, int sy, Direction dir1) {
                     else if (beams[i].dir == Direction::DOWN) {
                         newY -= 2;
                     }
-                    Beam newBeam = {newX, newY, dirMap[beams[i].dir]};
-                    beams.push_back(newBeam);
+                    if (newX >= 0 && newX < grid[0].size() && newY >= 0 && newY < grid.size() && !seen[newY][newX][static_cast<int>(dirMap[beams[i].dir])]) {
+                        Beam newBeam = Beam(newX, newY, dirMap[beams[i].dir]);
+                        beams.push_back(newBeam);
+                    }
                 }
             }
 
         }
-        if (energized == prev)
-            cnt++;
-        if (cnt == 3) {
-            break;
-        }
+        // printEnergy(energized);
         for (int i = 0; i < beams.size(); i++) {
             if (beams[i].x == -1 && beams[i].y == -1) {
                 beams.erase(beams.begin() + i);
@@ -229,6 +239,18 @@ int solve(vector<vector<char>>& grid, int sx, int sy, Direction dir1) {
             }
         }
     }
+
+    // for (int i = 0; i < seen.size(); i++) {
+    //     for (int j = 0; j < seen[i].size(); j++) {
+    //         for (int k = 0; k < 4; ++k) {
+    //             if (seen[i][j][k]) {
+    //                 ans++;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    // }
+
     return ans;
 }
 
