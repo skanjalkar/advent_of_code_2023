@@ -12,8 +12,8 @@ using namespace std;
 
 #define vertical (grid[beams[i].y][beams[i].x] == '.' || grid[beams[i].y][beams[i].x] == '|')
 #define horizontal (grid[beams[i].y][beams[i].x] == '-' || grid[beams[i].y][beams[i].x] == '.')
-#define valid beams[i].x >= 0 && beams[i].x < grid[0].size() && beams[i].y >= 0 && beams[i].y < grid.size()
-#define invalid beams[i].x < 0 || beams[i].x >= grid[0].size() || beams[i].y < 0 || beams[i].y >= grid.size()
+#define valid (beams[i].x >= 0 && beams[i].x < grid[0].size() && beams[i].y >= 0 && beams[i].y < grid.size())
+#define invalid (beams[i].x < 0 || beams[i].x >= grid[0].size() || beams[i].y < 0 || beams[i].y >= grid.size())
 
 enum class Direction {
     UP,
@@ -61,6 +61,42 @@ struct PairHash {
     }
 };
 
+void printBeams(vector<Beam>& b) {
+    for (int i = 0; i < b.size(); i++) {
+        cout << b[i].x << " " << b[i].y << " ";
+        if (b[i].dir == Direction::UP) {
+            cout << "UP" << endl;
+        }
+        else if (b[i].dir == Direction::DOWN) {
+            cout << "DOWN" << endl;
+        }
+        else if (b[i].dir == Direction::LEFT) {
+            cout << "LEFT" << endl;
+        }
+        else {
+            cout << "RIGHT" << endl;
+        }
+    }
+    cout << endl;
+
+}
+
+void printBeam(Beam& b) {
+    cout << b.x << " " << b.y << " ";
+    if (b.dir == Direction::UP) {
+        cout << "UP" << endl;
+    }
+    else if (b.dir == Direction::DOWN) {
+        cout << "DOWN" << endl;
+    }
+    else if (b.dir == Direction::LEFT) {
+        cout << "LEFT" << endl;
+    }
+    else {
+        cout << "RIGHT" << endl;
+    }
+}
+
 void solve(vector<vector<char>>& grid) {
     vector<vector<bool>> energized(grid.size(), vector<bool>(grid[0].size(), false));
     unordered_map<Direction, Direction> dirMap = {
@@ -85,23 +121,36 @@ void solve(vector<vector<char>>& grid) {
     Beam b = {0, 0, Direction::RIGHT};
     beams.push_back(b);
     int cnt = 0;
+    int j = 0;
     while (!beams.empty()) {
+        j++;
         int n = beams.size();
+        // cout << j << " " << n << endl;
         vector<vector<bool>> prev = energized;
+        // if (j == 277) {
+        //     printBeams(beams);
+        //     printEnergy(energized);
+        // }
         for (int i = 0; i < n; i++) {
-            if (beams[i].dir == Direction::RIGHT && beams[i].x < grid[0].size() && (horizontal)) {
+            // if (j == 277) {
+            //     cout << i << endl;
+            // }
+            // if (j == 277 && i == 111) {
+            //     printBeam(beams[i]);
+            // }
+            if (beams[i].dir == Direction::RIGHT && valid && horizontal) {
                 energized[beams[i].y][beams[i].x] = true;
                 beams[i].x++;
             }
-            else if (beams[i].dir == Direction::LEFT && beams[i].x >= 0 && (horizontal)) {
+            else if (beams[i].dir == Direction::LEFT && valid && horizontal) {
                 energized[beams[i].y][beams[i].x] = true;
                 beams[i].x--;
             }
-            else if (beams[i].dir == Direction::UP && beams[i].y >= 0 && vertical) {
+            else if (beams[i].dir == Direction::UP && valid && vertical) {
                 energized[beams[i].y][beams[i].x] = true;
                 beams[i].y--;
             }
-            else if (beams[i].dir == Direction::DOWN && beams[i].y < grid.size() && (vertical)) {
+            else if (beams[i].dir == Direction::DOWN && valid && vertical) {
                 energized[beams[i].y][beams[i].x] = true;
                 beams[i].y++;
             }
@@ -128,7 +177,7 @@ void solve(vector<vector<char>>& grid) {
                     else if (beams[i].dir == Direction::UP) {
                         beams[i].y--;
                     }
-                    else if (beams[i].dir == Direction::DOWN) {
+                    else {
                         beams[i].y++;
                     }
                 }
@@ -171,7 +220,7 @@ void solve(vector<vector<char>>& grid) {
         }
         if (energized == prev)
             cnt++;
-        if (cnt == 10) {
+        if (cnt == 3) {
             break;
         }
         for (int i = 0; i < beams.size(); i++) {
