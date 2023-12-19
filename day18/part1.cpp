@@ -35,32 +35,33 @@ void bfs(vector<vector<char>>& grid, int i, int j) {
     }
 }
 
-void solve(vector<vector<char>>& grid, vector<pair<char, int>>& instructions) {
+void solve(vector<vector<char>>& grid, vector<pair<char, int>>& instructions, int minX, int minY) {
     int cx = 0;
     int cy = 0;
 
     for (auto& p : instructions) {
         char dir = p.first;
         int dist = p.second;
+        // cout << dir << " " << dist << endl;
         if (dir == 'R') {
             for (int i = 0; i < dist; i++) {
                 cy++;
-                grid[cx][cy] = '#';
+                grid[minY + cx][minX + cy] = '#';
             }
         } else if (dir == 'L') {
             for (int i = 0; i < dist; i++) {
                 cy--;
-                grid[cx][cy] = '#';
+                grid[minY + cx][minX + cy] = '#';
             }
         } else if (dir == 'D') {
             for (int i = 0; i < dist; i++) {
                 cx++;
-                grid[cx][cy] = '#';
+                grid[minY + cx][minX + cy] = '#';
             }
         } else if (dir == 'U') {
             for (int i = 0; i < dist; i++) {
                 cx--;
-                grid[cx][cy] = '#';
+                grid[minY + cx][minX + cy] = '#';
             }
         } else {
             cout << "ERROR" << endl;
@@ -96,6 +97,8 @@ int main() {
     string input;
     int maxX = -1;
     int maxY = -1;
+    int minX = INT_MAX;
+    int minY = INT_MAX;
     int currx = 0;
     int curry = 0;
     vector<pair<char, int>> instructions;
@@ -117,11 +120,13 @@ int main() {
         } else {
             cout << "ERROR" << endl;
         }
+        minX = min(minX, currx);
+        minY = min(minY, curry);
         maxX = max(maxX, currx);
         maxY = max(maxY, curry);
     }
     // cout << "maxX " << maxX << " maxY " << maxY << "\n";
-    vector<vector<char>> grid(maxY + 1, vector<char>(maxX + 1, '.'));
-    solve(grid, instructions);
+    vector<vector<char>> grid(abs(minY) + maxY + 1, vector<char>(abs(minX) + maxX + 1, '.'));
+    solve(grid, instructions, abs(minX), abs(minY));
     return 0;
 }
