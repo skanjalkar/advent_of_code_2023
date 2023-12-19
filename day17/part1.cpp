@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <iostream>
+#include <utility>
 
 using namespace std;
 
@@ -38,15 +40,19 @@ struct Node {
     }
 
     bool operator==(const Node& other) const {
-        return i == other.i && j == other.j && cnt == other.cnt;
+        return i == other.i && j == other.j && cnt == other.cnt && dir == other.dir;
     }
 
     bool operator!=(const Node& other) const {
         return !(*this == other);
     }
 
+    bool operator>(const Node& other) const {
+        return cost < other.cost;
+    }
+
     void print() {
-        cout << i << " " << j << " " << cnt << " " << cost << " " << dir << endl;
+        cout << "i: " << i << " j: " << j << " cnt: " << cnt << " cost: " << cost << " dir: " << dir << endl;
     }
 };
 
@@ -56,7 +62,7 @@ bool valid(int i, int j, const vector<vector<int>>& grid) {
 
 unordered_map<Direction, vector<pair<int, int>>> dirMap = {
     {Direction::UP, {{-1, 0}, {0, -1}, {0, 1}}},
-    {Direction::DOWN, {{1, 0}, {0, 1}, {0, -1}}},
+    {Direction::DOWN, {{1, 0}, {0, -1}, {0, 1}}},
     {Direction::LEFT, {{0, -1}, {-1, 0}, {1, 0}}},
     {Direction::RIGHT, {{0, 1}, {1, 0}, {-1, 0}}}
 };
@@ -82,42 +88,50 @@ namespace std {
     };
 }
 
+struct Compare {
+    bool operator()(const Node& n1, const Node& n2) {
+        return n1.cost > n2.cost;
+    }
+};
+
 void solve(vector<vector<int>>& grid, int si, int sj) {
     Node start = Node(si, sj, 0, 0, Direction::RIGHT);
-    priority_queue<pair<int, Node>> pq;
-    pq.push(make_pair(0, start));
-    unordered_set<vector<int>> visited;
+    // convert pq to min heap
+    priority_queue<Node, vector<Node>, Compare> pq;
+    pq.push(start);
+    unordered_map<vector<int>, int> visited;
 
     while (!pq.empty()) {
-        pair<int, Node> curr = pq.top();
+        Node node = pq.top();
         pq.pop();
-
-        int cost = curr.first;
-        Node node = curr.second;
-
+        vector<int> v = {node.cnt, node.i, node.j, static_cast<int>(node.dir)};
         if (node.i == grid.size() - 1 && node.j == grid[0].size() - 1) {
-            cout << cost << endl;
+            cout << node.cost << endl;
             return;
         }
 
-        if (visited.find({node.cnt, make_pair(node.i, node.j)}) != visited.end()) {
+        if (visited.find(v) != visited.end()) {
             continue;
         }
-        visited.insert({node.cnt, make_pair(node.i, node.j)});
+        // node.print();
+        visited[v] = node.cost;
 
         for (auto d : dirMap[node.dir]) {
             int ni = node.i + d.first;
             int nj = node.j + d.second;
             if (valid(ni, nj, grid)) {
-                if (dirMap2[d] == node.dir && node.cnt < 3) {
-                    pq.push(make_pair(cost + grid[ni][nj], Node(ni, nj, node.cnt + 1, cost + grid[ni][nj], dirMap2[d])));
+                if (dirMap2[d] == node.dir && node.cnt + 1 <= 3) {
+                    Node temp = Node(ni, nj, node.cnt + 1, node.cost + grid[ni][nj], dirMap2[d]);
+                    pq.push(temp);
                 }
-                else {
-                    pq.push(make_pair(cost + grid[ni][nj], Node(ni, nj, 1, cost + grid[ni][nj], dirMap2[d])));
+                else if (dirMap2[d] != node.dir){
+                    Node temp = Node(ni, nj, 1, node.cost + grid[ni][nj], dirMap2[d]);
+                    pq.push(temp);
                 }
             }
         }
     }
+
     return;
 }
 
@@ -131,6 +145,8 @@ int main() {
         }
         grid.push_back(row);
     }
+
+    // printGrid(grid);
 
     solve(grid, 0, 0);
 
