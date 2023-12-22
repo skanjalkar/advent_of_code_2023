@@ -109,22 +109,22 @@ int main() {
         ss >> dir >> dist;
         string s;
         ss >> s;
-        s = s.substr(1, s.size() - 2);
-        cout << s << " " <<  s.back() <<endl;
+        s = s.substr(2, s.size() - 3);
+        // cout << s << " " <<  s.back() <<endl;
         // cout << dir << " " << dist << endl;
+        long long num = stoll(s.substr(0, s.size() - 1), nullptr, 16);
         if (s.back() == '0') {
-            long long num = stoll(s.substr(0, s.size() - 1));
-            currx += stoll(s.substr(0, s.size() - 1));
-            instructions.push_back(make_pair('R', stoi(s.substr(0, s.size() - 1))));
+            currx += num;
+            instructions.push_back(make_pair('R', num));
         } else if (s.back() == '2') {
-            instructions.push_back(make_pair('L', stoi(s.substr(0, s.size() - 1))));
-            currx -= stoll(s.substr(0, s.size() - 1));
+            instructions.push_back(make_pair('L', num));
+            currx -= num;
         } else if (s.back() == '1') {
-            instructions.push_back(make_pair('D', stoi(s.substr(0, s.size() - 1))));
-            curry += stoll(s.substr(0, s.size() - 1));
+            instructions.push_back(make_pair('D', num));
+            curry += num;
         } else if (s.back() == '3') {
-            instructions.push_back(make_pair('U', stoi(s.substr(0, s.size() - 1))));
-            curry -= stoll(s.substr(0, s.size() - 1));
+            instructions.push_back(make_pair('U', num));
+            curry -= num;
         } else {
             cout << "ERROR" << endl;
         }
@@ -133,7 +133,7 @@ int main() {
         maxX = max(maxX, currx);
         maxY = max(maxY, curry);
     }
-    // cout << "maxX " << maxX << " maxY " << maxY << " minY " << minY << " minX " << minX  << "\n";
+    cout << "maxX " << maxX << " maxY " << maxY << " minY " << minY << " minX " << minX  << "\n";
     vector<vector<char>> grid(abs(minY) + maxY + 1, vector<char>(abs(minX) + maxX + 1, '.'));
     solve(grid, instructions, abs(minX), abs(minY));
     return 0;
